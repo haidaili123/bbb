@@ -1,0 +1,279 @@
+/* 低饱和暖米黄色主题数据可视化样式 */
+
+:root {
+    --primary-warm: #D4A574;        /* 暖米黄色 */
+    --secondary-warm: #C19A6B;       /* 深一点暖米色 */
+    --light-warm: #E6D5B8;           /* 浅暖米色 */
+    --pale-warm: #F5F0E8;            /* 极浅暖米色 */
+    --accent-warm: #B8956A;          /* 强调暖色 */
+    --text-primary: #5D4E37;         /* 深棕色文字 */
+    --text-secondary: #8B7355;       /* 中棕色文字 */
+    --background: #FAF8F5;            /* 暖米白背景 */
+    --card-bg: #FFFFFF;              /* 卡片背景 */
+    --border-warm: #E8D4B1;          /* 边框颜色 */
+    --shadow-warm: rgba(212, 165, 116, 0.1); /* 暖色阴影 */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', 'Arial', sans-serif;
+    background: linear-gradient(135deg, var(--background) 0%, var(--pale-warm) 100%);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* 头部样式 */
+header {
+    background: linear-gradient(135deg, var(--primary-warm) 0%, var(--secondary-warm) 100%);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    box-shadow: 0 4px 15px var(--shadow-warm);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* 导航样式 */
+nav {
+    background: var(--card-bg);
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px var(--shadow-warm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+nav a {
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+nav a:hover {
+    background: var(--light-warm);
+    color: var(--accent-warm);
+    transform: translateY(-2px);
+}
+
+/* 主内容区域 */
+main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+section {
+    margin-bottom: 4rem;
+}
+
+section h2 {
+    color: var(--primary-warm);
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 400;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-warm), var(--secondary-warm));
+    border-radius: 2px;
+}
+
+/* 实例卡片 */
+.example-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 25px var(--shadow-warm);
+    border: 1px solid var(--border-warm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(212, 165, 116, 0.15);
+}
+
+.example-card h3 {
+    color: var(--accent-warm);
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* 图表网格布局 */
+.charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.chart-container {
+    background: var(--pale-warm);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px var(--shadow-warm);
+    border: 1px solid var(--border-warm);
+    transition: transform 0.3s ease;
+}
+
+.chart-container:hover {
+    transform: scale(1.02);
+}
+
+.chart-container.large {
+    grid-column: 1 / -1;
+}
+
+.chart-container.full-width {
+    grid-column: 1 / -1;
+}
+
+/* 抖音特殊布局 */
+.douyin-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1.5rem;
+}
+
+.douyin-grid .large {
+    grid-column: 1 / -1;
+    grid-row: 1;
+}
+
+/* 汽车销售布局 */
+.car-sales-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.car-sales-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+/* 页脚 */
+footer {
+    background: var(--secondary-warm);
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 4rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .charts-grid,
+    .douyin-grid,
+    .car-sales-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container.large,
+    .chart-container.full-width {
+        grid-column: 1;
+    }
+    
+    main {
+        padding: 1rem;
+    }
+    
+    .example-card {
+        padding: 1rem;
+    }
+}
+
+/* 加载动画 */
+.chart-container {
+    position: relative;
+}
+
+.chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(212, 165, 116, 0.1), transparent);
+    animation: shimmer 2s infinite;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--pale-warm);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-warm);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-warm);
+}
+
+/* 平滑滚动 */
+html {
+    scroll-behavior: smooth;
+}
