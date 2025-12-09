@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浅紫色渐变主题 - 第六章坐标轴定制交互网站</title>
+    <link rel="stylesheet" href="style-purple.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-title">🎨 浅紫色渐变主题</div>
+            <ul class="nav-links">
+                <li><a href="#overview">概述</a></li>
+                <li><a href="#wind-speed">风速分析</a></li>
+                <li><a href="#trigonometric">三角函数</a></li>
+                <li><a href="#axis-customization">坐标轴定制</a></li>
+                <li><a href="#interactive">交互体验</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 标题区域 -->
+        <div style="text-align: center; margin: 3rem 0;">
+            <h1>🌸 浅紫色渐变主题</h1>
+            <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                基于Matplotlib第六章的坐标轴定制 - 优雅紫色渐变交互体验
+            </p>
+        </div>
+
+        <!-- 统计概览 -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCharts">8</div>
+                <div class="stat-label">交互图表</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="customOptions">25+</div>
+                <div class="stat-label">定制选项</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="purpleShades">7</div>
+                <div class="stat-label">紫色渐变</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="dataPoints">100+</div>
+                <div class="stat-label">数据点</div>
+            </div>
+        </div>
+
+        <!-- 概述部分 -->
+        <section id="overview">
+            <div class="card">
+                <h2>📖 主题概述</h2>
+                <p>浅紫色渐变主题采用从极浅紫到深紫的优雅渐变，营造出梦幻而专业的视觉效果。主题基于第六章坐标轴定制的所有实例，提供丰富的交互功能和定制选项。</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
+                    <div style="background: var(--gradient-primary); padding: 1.5rem; border-radius: var(--border-radius); text-align: center;">
+                        <h3 style="color: var(--vibrant-purple); margin-bottom: 1rem;">🎨 渐变配色</h3>
+                        <p style="color: var(--text-secondary);">从#F3E5F5到#9C27B0的优雅紫色渐变</p>
+                    </div>
+                    <div style="background: var(--gradient-secondary); padding: 1.5rem; border-radius: var(--border-radius); text-align: center; color: white;">
+                        <h3 style="margin-bottom: 1rem;">⚡ 交互体验</h3>
+                        <p>实时坐标轴定制、数据筛选和动画效果</p>
+                    </div>
+                    <div style="background: var(--gradient-accent); padding: 1.5rem; border-radius: var(--border-radius); text-align: center; color: white;">
+                        <h3 style="margin-bottom: 1rem;">📊 数据可视化</h3>
+                        <p>基于第六章所有实例的完整重现</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 标签页导航 -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('wind-speed')">🌪️ 风速分析</button>
+            <button class="tab" onclick="showTab('trigonometric')">📐 三角函数</button>
+            <button class="tab" onclick="showTab('axis-position')">📍 轴位置</button>
+            <button class="tab" onclick="showTab('custom-charts')">🎨 自定义</button>
+        </div>
+
+        <!-- 风速分析标签页 -->
+        <div id="wind-speed" class="tab-content active">
+            <div class="card">
+                <h2>🌪️ 深圳市24小时风速分析</h2>
+                <p>基于第六章实例1：展示深圳市24小时的平均风速变化，支持完整的刻度定制和轴脊控制功能。</p>
+                
+                <div class="controls">
+                    <h3>⚙️ 刻度定制控制</h3>
+                    
+                    <div class="control-group">
+                        <label>刻度间隔：</label>
+                        <select id="tickIntervalPurple" onchange="updateWindSpeedChartPurple()">
+                            <option value="1">每小时</option>
+                            <option value="2" selected>每2小时</option>
+                            <option value="3">每3小时</option>
+                            <option value="4">每4小时</option>
+                            <option value="6">每6小时</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>刻度方向：</label>
+                        <select id="tickDirectionPurple" onchange="updateWindSpeedChartPurple()">
+                            <option value="in" selected>向内</option>
+                            <option value="out">向外</option>
+                            <option value="inout">双向</option>
+                        </select>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>标签旋转角度：</label>
+                        <input type="range" id="labelRotationPurple" class="slider" min="0" max="90" value="45" oninput="updateWindSpeedChartPurple()">
+                        <span id="rotationValuePurple">45°</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>轴脊显示：</label>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <label><input type="checkbox" id="showTopPurple" checked onchange="updateWindSpeedChartPurple()"> 上轴脊</label>
+                            <label><input type="checkbox" id="showRightPurple" checked onchange="updateWindSpeedChartPurple()"> 右轴脊</label>
+                            <label><input type="checkbox" id="showBottomPurple" checked onchange="updateWindSpeedChartPurple()"> 下轴脊</label>
+                            <label><input type="checkbox" id="showLeftPurple" checked onchange="updateWindSpeedChartPurple()"> 左轴脊</label>
+                        </div>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>刻度长度：</label>
+                        <input type="range" id="tickLengthPurple" class="slider" min="2" max="12" value="6" oninput="updateWindSpeedChartPurple()">
+                        <span id="tickLengthValuePurple">6px</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>数据点样式：</label>
+                        <select id="pointStylePurple" onchange="updateWindSpeedChartPurple()">
+                            <option value="circle">圆形</option>
+                            <option value="triangle">三角形</option>
+                            <option value="rect">方形</option>
+                            <option value="star">星形</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="windSpeedPurpleChart"></canvas>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="exportChart('windSpeedPurpleChart')">
+                        📥 导出图表
+                    </button>
+                    <button class="btn btn-secondary" onclick="animateWindSpeedData()">
+                        ✨ 播放动画
+                    </button>
+                    <button class="btn btn-ghost" onclick="resetWindSpeedSettings()">
+                        🔄 重置设置
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 三角函数标签页 -->
+        <div id="trigonometric" class="tab-content">
+            <div class="card">
+                <h2>📐 正弦与余弦函数曲线</h2>
+                <p>基于第六章实例3：展示三角函数的坐标轴定制，包括轴脊移动、刻度标签设置和π符号显示。</p>
+                
+                <div class="controls">
+                    <h3>⚙️ 函数参数定制</h3>
+                    
+                    <div class="control-group">
+                        <label>X轴范围：</label>
+                        <select id="xRangePurple" onchange="updateTrigChartPurple()">
+                            <option value="-2,2" selected>-2π 到 2π</option>
+                            <option value="-1,1">-π 到 π</option>
+                            <option value="0,2">0 到 2π</option>
+                            <option value="-3,3">-3π 到 3π</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>刻度标签格式：</label>
+                        <select id="tickFormatPurple" onchange="updateTrigChartPurple()">
+                            <option value="pi" selected>π 符号</option>
+                            <option value="decimal">小数</option>
+                            <option value="fraction">分数</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>轴脊位置：</label>
+                        <select id="spinePositionPurple" onchange="updateTrigChartPurple()">
+                            <option value="center" selected>中心(0,0)</option>
+                            <option value="origin">默认位置</option>
+                            <option value="custom">自定义位置</option>
+                        </select>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>函数振幅：</label>
+                        <input type="range" id="amplitudePurple" class="slider" min="0.5" max="2" step="0.1" value="1" oninput="updateTrigChartPurple()">
+                        <span id="amplitudeValuePurple">1.0</span>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>函数频率：</label>
+                        <input type="range" id="frequencyPurple" class="slider" min="0.5" max="3" step="0.1" value="1" oninput="updateTrigChartPurple()">
+                        <span id="frequencyValuePurple">1.0</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>显示选项：</label>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <label><input type="checkbox" id="showGridPurple" checked onchange="updateTrigChartPurple()"> 显示网格</label>
+                            <label><input type="checkbox" id="showSinPurple" checked onchange="updateTrigChartPurple()"> sin(x)</label>
+                            <label><input type="checkbox" id="showCosPurple" checked onchange="updateTrigChartPurple()"> cos(x)</label>
+                            <label><input type="checkbox" id="showTanPurple" onchange="updateTrigChartPurple()"> tan(x)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>数据点密度：</label>
+                        <input type="range" id="dataDensityPurple" class="slider" min="50" max="500" step="50" value="100" oninput="updateTrigChartPurple()">
+                        <span id="dataDensityValuePurple">100</span>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="trigPurpleChart"></canvas>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="exportChart('trigPurpleChart')">
+                        📥 导出图表
+                    </button>
+                    <button class="btn btn-secondary" onclick="animateTrigFunction()">
+                        🌊 播放波动动画
+                    </button>
+                    <button class="btn btn-ghost" onclick="resetTrigSettings()">
+                        🔄 重置设置
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 轴位置标签页 -->
+        <div id="axis-position" class="tab-content">
+            <div class="card">
+                <h2>📍 坐标轴位置定制</h2>
+                <p>探索不同坐标轴位置的设置效果，包括向任意位置添加坐标轴和轴脊移动功能。</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin: 2rem 0;">
+                    <div class="chart-container" style="height: 350px;">
+                        <canvas id="axisDemoPurple1"></canvas>
+                    </div>
+                    <div class="chart-container" style="height: 350px;">
+                        <canvas id="axisDemoPurple2"></canvas>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <h3>⚙️ 轴位置控制</h3>
+                    
+                    <div class="slider-container">
+                        <label>第一个图表X位置：</label>
+                        <input type="range" id="chart1XPurple" class="slider" min="0.1" max="0.7" step="0.05" value="0.2" oninput="updateAxisPositionsPurple()">
+                        <span id="chart1XValuePurple">0.2</span>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>第一个图表Y位置：</label>
+                        <input type="range" id="chart1YPurple" class="slider" min="0.1" max="0.7" step="0.05" value="0.5" oninput="updateAxisPositionsPurple()">
+                        <span id="chart1YValuePurple">0.5</span>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>第二个图表X位置：</label>
+                        <input type="range" id="chart2XPurple" class="slider" min="0.6" max="0.9" step="0.05" value="0.6" oninput="updateAxisPositionsPurple()">
+                        <span id="chart2XValuePurple">0.6</span>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>第二个图表Y位置：</label>
+                        <input type="range" id="chart2YPurple" class="slider" min="0.1" max="0.7" step="0.05" value="0.4" oninput="updateAxisPositionsPurple()">
+                        <span id="chart2YValuePurple">0.4</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>图表类型：</label>
+                        <select id="chart1TypePurple" onchange="updateAxisChartTypes()">
+                            <option value="line">折线图</option>
+                            <option value="bar">柱状图</option>
+                            <option value="scatter">散点图</option>
+                        </select>
+                        <select id="chart2TypePurple" onchange="updateAxisChartTypes()">
+                            <option value="bar">柱状图</option>
+                            <option value="line">折线图</option>
+                            <option value="scatter">散点图</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 自定义图表标签页 -->
+        <div id="custom-charts" class="tab-content">
+            <div class="card">
+                <h2>🎨 自定义图表创作</h2>
+                <p>综合应用各种坐标轴定制技巧，创建您自己的交互式图表。</p>
+                
+                <div class="controls">
+                    <h3>⚙️ 创作工具</h3>
+                    
+                    <div class="control-group">
+                        <label>图表类型：</label>
+                        <select id="chartTypePurple" onchange="createCustomChartPurple()">
+                            <option value="line">折线图</option>
+                            <option value="bar">柱状图</option>
+                            <option value="scatter">散点图</option>
+                            <option value="area">面积图</option>
+                            <option value="bubble">气泡图</option>
+                            <option value="radar">雷达图</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>数据模式：</label>
+                        <select id="dataModePurple" onchange="generateCustomDataPurple()">
+                            <option value="random">随机数据</option>
+                            <option value="sine">正弦波</option>
+                            <option value="cosine">余弦波</option>
+                            <option value="linear">线性增长</option>
+                            <option value="exponential">指数增长</option>
+                            <option value="logarithmic">对数增长</option>
+                        </select>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>数据点数量：</label>
+                        <input type="range" id="dataPointsPurple" class="slider" min="5" max="100" value="30" oninput="generateCustomDataPurple()">
+                        <span id="dataPointsValuePurple">30</span>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label>数据范围：</label>
+                        <input type="range" id="dataRangePurple" class="slider" min="10" max="200" value="100" oninput="generateCustomDataPurple()">
+                        <span id="dataRangeValuePurple">100</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>主色调：</label>
+                        <input type="color" id="primaryColorPurple" value="#9C27B0" onchange="updateCustomChartColors()">
+                        <input type="color" id="secondaryColorPurple" value="#CE93D8" onchange="updateCustomChartColors()">
+                        <input type="color" id="accentColorPurple" value="#E1BEE7" onchange="updateCustomChartColors()">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>动画效果：</label>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <label><input type="checkbox" id="enableAnimationPurple" checked> 启用动画</label>
+                            <label><input type="checkbox" id="enableInteractionPurple" checked> 启用交互</label>
+                            <label><input type="checkbox" id="enableGlowPurple"> 发光效果</label>
+                            <label><input type="checkbox" id="enableGradientPurple"> 渐变填充</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="customPurpleChart"></canvas>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="exportChart('customPurpleChart')">
+                        📥 导出图表
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateCustomDataPurple()">
+                        🎲 生成新数据
+                    </button>
+                    <button class="btn btn-secondary" onclick="animateCustomChart()">
+                        ✨ 播放动画
+                    </button>
+                    <button class="btn btn-ghost" onclick="resetCustomSettings()">
+                        🔄 重置设置
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 交互体验区域 -->
+        <section id="interactive">
+            <div class="card">
+                <h2>🎮 交互功能展示</h2>
+                <p>体验浅紫色主题的丰富交互功能和视觉效果。</p>
+                
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-number">🎨</div>
+                        <div class="stat-label">7种紫色渐变</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">⚡</div>
+                        <div class="stat-label">实时响应</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">🎯</div>
+                        <div class="stat-label">精确控制</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">✨</div>
+                        <div class="stat-label">流畅动画</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                    <button class="btn btn-primary" onclick="exportAllChartsPurple()">
+                        📥 导出所有图表
+                    </button>
+                    <button class="btn btn-secondary" onclick="randomizeAllDataPurple()">
+                        🎲 随机化所有数据
+                    </button>
+                    <button class="btn btn-ghost" onclick="resetAllSettingsPurple()">
+                        🔄 重置所有设置
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>🌸 浅紫色渐变主题 | 基于Matplotlib第六章坐标轴定制的交互式数据可视化</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 浅紫色主题配色
+        const purpleTheme = {
+            light: '#F3E5F5',
+            pale: '#E1BEE7',
+            soft: '#CE93D8',
+            medium: '#AB47BC',
+            vibrant: '#9C27B0',
+            deep: '#7B1FA2',
+            dark: '#6A1B9A',
+            accent: '#8E24AA'
+        };
+
+        // 图表实例存储
+        let purpleCharts = {
+            windSpeed: null,
+            trigonometric: null,
+            axisDemo1: null,
+            axisDemo2: null,
+            custom: null
+        };
+
+        // 第六章数据
+        const chapter6Data = {
+            windSpeed: {
+                labels: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'],
+                values: [7, 9, 11, 14, 8, 15, 22, 11, 10, 11, 11, 13, 8]
+            },
+            axisDemo: {
+                labels: ['1', '2', '3', '4', '5', '6', '7'],
+                data1: [12, 19, 3, 5, 2, 8, 15],
+                data2: [8, 12, 6, 9, 4, 11, 7]
+            }
+        };
+
+        // 生成三角函数数据
+        function generateTrigData(points = 100, start = -2*Math.PI, end = 2*Math.PI) {
+            const x = [];
+            const sin = [];
+            const cos = [];
+            const tan = [];
+            
+            for (let i = 0; i < points; i++) {
+                const val = start + (end - start) * i / (points - 1);
+                x.push(val);
+                sin.push(Math.sin(val));
+                cos.push(Math.cos(val));
+                tan.push(Math.tan(val));
+            }
+            return { x, sin, cos, tan };
+        }
+
+        // 生成自定义数据
+        function generateCustomData(mode = 'random', count = 30, range = 100) {
+            const labels = [];
+            const data = [];
+            
+            for (let i = 0; i < count; i++) {
+                labels.push(`数据${i + 1}`);
+                
+                switch(mode) {
+                    case 'sine':
+                        data.push(Math.sin(i * 0.3) * range/2 + range/2);
+                        break;
+                    case 'cosine':
+                        data.push(Math.cos(i * 0.3) * range/2 + range/2);
+                        break;
+                    case 'linear':
+                        data.push(i * range / count);
+                        break;
+                    case 'exponential':
+                        data.push(Math.exp(i * 0.1) * 10);
+                        break;
+                    case 'logarithmic':
+                        data.push(Math.log(i + 1) * range / 5);
+                        break;
+                    default:
+                        data.push(Math.random() * range);
+                }
+            }
+            
+            return { labels, data };
+        }
+
+        // 创建风速图表
+        function createWindSpeedChartPurple() {
+            const ctx = document.getElementById('windSpeedPurpleChart');
+            if (!ctx) return;
+            
+            purpleCharts.windSpeed = new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: chapter6Data.windSpeed.labels,
+                    datasets: [{
+                        label: '平均风速 (km/h)',
+                        data: chapter6Data.windSpeed.values,
+                        borderColor: purpleTheme.vibrant,
+                        backgroundColor: purpleTheme.light + '60',
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: purpleTheme.medium,
+                        pointBorderColor: purpleTheme.vibrant,
+                        pointBorderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '深圳市24小时平均风速监测',
+                            font: { size: 16, weight: 'bold' },
+                            color: purpleTheme.dark,
+                            padding: 20
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 12 },
+                                color: purpleTheme.dark
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: purpleTheme.vibrant,
+                            bodyColor: purpleTheme.dark,
+                            borderColor: purpleTheme.medium,
+                            borderWidth: 2,
+                            padding: 12,
+                            cornerRadius: 8
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: '时间',
+                                font: { size: 14, weight: 'bold' },
+                                color: purpleTheme.dark
+                            },
+                            grid: {
+                                display: true,
+                                color: purpleTheme.light + '40',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { size: 11 },
+                                color: purpleTheme.dark
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: '风速 (km/h)',
+                                font: { size: 14, weight: 'bold' },
+                                color: purpleTheme.dark
+                            },
+                            grid: {
+                                display: true,
+                                color: purpleTheme.light + '40',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { size: 11 },
+                                color: purpleTheme.dark
+                            },
+                            beginAtZero: true,
+                            max: 25
+                        }
+                    },
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        // 创建三角函数图表
+        function createTrigChartPurple() {
+            const ctx = document.getElementById('trigPurpleChart');
+            if (!ctx) return;
+            
+            const data = generateTrigData(100, -2*Math.PI, 2*Math.PI);
+            
+            purpleCharts.trigonometric = new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: data.x,
+                    datasets: [{
+                        label: 'sin(x)',
+                        data: data.sin,
+                        borderColor: purpleTheme.vibrant,
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
+                        fill: false
+                    }, {
+                        label: 'cos(x)',
+                        data: data.cos,
+                        borderColor: purpleTheme.accent,
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
+                        fill: false
+                    }, {
+                        label: 'tan(x)',
+                        data: data.tan,
+                        borderColor: purpleTheme.medium,
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
+                        fill: false,
+                        hidden: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '三角函数曲线 - sin, cos, tan',
+                            font: { size: 16, weight: 'bold' },
+                            color: purpleTheme.dark,
+                            padding: 20
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 12 },
+                                color: purpleTheme.dark
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'x (弧度)',
+                                font: { size: 14, weight: 'bold' },
+                                color: purpleTheme.dark
+                            },
+                            grid: {
+                                display: true,
+                                color: purpleTheme.light + '40',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { size: 11 },
+                                color: purpleTheme.dark,
+                                callback: function(value) {
+                                    const pi = Math.PI;
+                                    if (Math.abs(value) < 0.01) return '0';
+                                    if (Math.abs(value - pi) < 0.1) return 'π';
+                                    if (Math.abs(value + pi) < 0.1) return '-π';
+                                    if (Math.abs(value - 2*pi) < 0.1) return '2π';
+                                    if (Math.abs(value + 2*pi) < 0.1) return '-2π';
+                                    return value.toFixed(1);
+                                }
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'y',
+                                font: { size: 14, weight: 'bold' },
+                                color: purpleTheme.dark
+                            },
+                            grid: {
+                                display: true,
+                                color: purpleTheme.light + '40',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { size: 11 },
+                                color: purpleTheme.dark
+                            },
+                            min: -2,
+                            max: 2
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        // 创建轴位置演示图表
+        function createAxisDemoChartsPurple() {
+            // 第一个演示图表
+            const ctx1 = document.getElementById('axisDemoPurple1');
+            if (ctx1) {
+                purpleCharts.axisDemo1 = new Chart(ctx1.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: chapter6Data.axisDemo.labels,
+                        datasets: [{
+                            label: '数据系列 A',
+                            data: chapter6Data.axisDemo.data1,
+                            borderColor: purpleTheme.vibrant,
+                            backgroundColor: purpleTheme.light + '60',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            pointBackgroundColor: purpleTheme.medium,
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '轴位置演示 1',
+                                font: { size: 14, weight: 'bold' },
+                                color: purpleTheme.dark
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: purpleTheme.dark }
+                            },
+                            y: {
+                                grid: { color: purpleTheme.light + '40' },
+                                ticks: { color: purpleTheme.dark }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 第二个演示图表
+            const ctx2 = document.getElementById('axisDemoPurple2');
+            if (ctx2) {
+                purpleCharts.axisDemo2 = new Chart(ctx2.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: chapter6Data.axisDemo.labels,
+                        datasets: [{
+                            label: '数据系列 B',
+                            data: chapter6Data.axisDemo.data2,
+                            backgroundColor: purpleTheme.accent,
+                            borderColor: purpleTheme.vibrant,
+                            borderWidth: 2,
+                            hoverBackgroundColor: purpleTheme.medium
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '轴位置演示 2',
+                                font: { size: 14, weight: 'bold' },
+                                color: purpleTheme.dark
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: purpleTheme.dark }
+                            },
+                            y: {
+                                grid: { color: purpleTheme.light + '40' },
+                                ticks: { color: purpleTheme.dark },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // 创建自定义图表
+        function createCustomChartPurple() {
+            const ctx = document.getElementById('customPurpleChart');
+            if (!ctx) return;
+            
+            const chartType = document.getElementById('chartTypePurple')?.value || 'line';
+            const dataMode = document.getElementById('dataModePurple')?.value || 'random';
+            const dataPoints = parseInt(document.getElementById('dataPointsPurple')?.value || 30);
+            const dataRange = parseInt(document.getElementById('dataRangePurple')?.value || 100);
+            
+            const data = generateCustomData(dataMode, dataPoints, dataRange);
+            
+            if (purpleCharts.custom) {
+                purpleCharts.custom.destroy();
+            }
+            
+            purpleCharts.custom = new Chart(ctx.getContext('2d'), {
+                type: chartType,
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: '自定义数据',
+                        data: data.data,
+                        borderColor: purpleTheme.vibrant,
+                        backgroundColor: chartType === 'line' ? purpleTheme.light + '60' : purpleTheme.accent + '80',
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        tension: 0.3,
+                        fill: chartType === 'area' || chartType === 'line'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '自定义创作图表',
+                            font: { size: 16, weight: 'bold' },
+                            color: purpleTheme.dark
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: { display: false },
+                            ticks: { color: purpleTheme.dark }
+                        },
+                        y: {
+                            display: true,
+                            grid: { color: purpleTheme.light + '40' },
+                            ticks: { color: purpleTheme.dark },
+                            beginAtZero: true
+                        }
+                    },
+                    animation: {
+                        duration: document.getElementById('enableAnimationPurple')?.checked ? 1000 : 0,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        // 更新风速图表
+        function updateWindSpeedChartPurple() {
+            if (!purpleCharts.windSpeed) return;
+            
+            const interval = parseInt(document.getElementById('tickIntervalPurple')?.value || 2);
+            const rotation = parseInt(document.getElementById('labelRotationPurple')?.value || 45);
+            
+            document.getElementById('rotationValuePurple').textContent = rotation + '°';
+            
+            // 更新数据间隔
+            if (interval > 1) {
+                const filteredLabels = [];
+                const filteredData = [];
+                for (let i = 0; i < chapter6Data.windSpeed.labels.length; i += interval) {
+                    filteredLabels.push(chapter6Data.windSpeed.labels[i]);
+                    filteredData.push(chapter6Data.windSpeed.values[i]);
+                }
+                purpleCharts.windSpeed.data.labels = filteredLabels;
+                purpleCharts.windSpeed.data.datasets[0].data = filteredData;
+            } else {
+                purpleCharts.windSpeed.data.labels = chapter6Data.windSpeed.labels;
+                purpleCharts.windSpeed.data.datasets[0].data = chapter6Data.windSpeed.values;
+            }
+            
+            // 更新刻度旋转
+            purpleCharts.windSpeed.options.scales.x.ticks.maxRotation = rotation;
+            purpleCharts.windSpeed.options.scales.x.ticks.minRotation = rotation;
+            
+            purpleCharts.windSpeed.update('none');
+        }
+
+        // 更新三角函数图表
+        function updateTrigChartPurple() {
+            if (!purpleCharts.trigonometric) return;
+            
+            const xRange = document.getElementById('xRangePurple')?.value || '-2,2';
+            const amplitude = parseFloat(document.getElementById('amplitudePurple')?.value || 1);
+            const frequency = parseFloat(document.getElementById('frequencyPurple')?.value || 1);
+            const dataDensity = parseInt(document.getElementById('dataDensityPurple')?.value || 100);
+            
+            document.getElementById('amplitudeValuePurple').textContent = amplitude.toFixed(1);
+            document.getElementById('frequencyValuePurple').textContent = frequency.toFixed(1);
+            document.getElementById('dataDensityValuePurple').textContent = dataDensity;
+            
+            const [start, end] = xRange.split(',').map(Number);
+            const data = generateTrigData(dataDensity, start * Math.PI, end * Math.PI);
+            
+            purpleCharts.trigonometric.data.labels = data.x;
+            purpleCharts.trigonometric.data.datasets[0].data = data.sin.map(v => v * amplitude);
+            purpleCharts.trigonometric.data.datasets[1].data = data.cos.map(v => v * amplitude);
+            purpleCharts.trigonometric.data.datasets[2].data = data.tan.map(v => v * amplitude);
+            
+            purpleCharts.trigonometric.update();
+        }
+
+        // 更新轴位置
+        function updateAxisPositionsPurple() {
+            const x1 = parseFloat(document.getElementById('chart1XPurple')?.value || 0.2);
+            const y1 = parseFloat(document.getElementById('chart1YPurple')?.value || 0.5);
+            const x2 = parseFloat(document.getElementById('chart2XPurple')?.value || 0.6);
+            const y2 = parseFloat(document.getElementById('chart2YPurple')?.value || 0.4);
+            
+            document.getElementById('chart1XValuePurple').textContent = x1.toFixed(2);
+            document.getElementById('chart1YValuePurple').textContent = y1.toFixed(2);
+            document.getElementById('chart2XValuePurple').textContent = x2.toFixed(2);
+            document.getElementById('chart2YValuePurple').textContent = y2.toFixed(2);
+            
+            console.log(`轴位置更新: 图表1(${x1}, ${y1}), 图表2(${x2}, ${y2})`);
+        }
+
+        // 生成自定义数据
+        function generateCustomDataPurple() {
+            const mode = document.getElementById('dataModePurple')?.value || 'random';
+            const count = parseInt(document.getElementById('dataPointsPurple')?.value || 30);
+            const range = parseInt(document.getElementById('dataRangePurple')?.value || 100);
+            
+            document.getElementById('dataPointsValuePurple').textContent = count;
+            document.getElementById('dataRangeValuePurple').textContent = range;
+            
+            createCustomChartPurple();
+        }
+
+        // 标签页切换
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            const tabButtons = document.querySelectorAll('.tab');
+            tabButtons.forEach(button => button.classList.remove('active'));
+            
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        // 导出图表
+        function exportChart(chartId) {
+            const chart = purpleCharts[chartId.replace('PurpleChart', '')] || 
+                          purpleCharts[chartId.replace('Chart', '')];
+            if (chart) {
+                const url = chart.toBase64Image();
+                const link = document.createElement('a');
+                link.download = `purple-chart-${chartId}-${Date.now()}.png`;
+                link.href = url;
+                link.click();
+            }
+        }
+
+        // 动画函数
+        function animateWindSpeedData() {
+            if (purpleCharts.windSpeed) {
+                const originalData = [...purpleCharts.windSpeed.data.datasets[0].data];
+                let step = 0;
+                const interval = setInterval(() => {
+                    if (step >= originalData.length) {
+                        clearInterval(interval);
+                        purpleCharts.windSpeed.data.datasets[0].data = originalData;
+                        purpleCharts.windSpeed.update();
+                        return;
+                    }
+                    purpleCharts.windSpeed.data.datasets[0].data = originalData.slice(0, step + 1);
+                    purpleCharts.windSpeed.update('none');
+                    step++;
+                }, 100);
+            }
+        }
+
+        function animateTrigFunction() {
+            console.log('播放三角函数波动动画');
+        }
+
+        function animateCustomChart() {
+            console.log('播放自定义图表动画');
+        }
+
+        // 重置设置函数
+        function resetWindSpeedSettings() {
+            document.getElementById('tickIntervalPurple').value = '2';
+            document.getElementById('labelRotationPurple').value = 45;
+            document.getElementById('tickLengthPurple').value = 6;
+            document.getElementById('pointStylePurple').value = 'circle';
+            updateWindSpeedChartPurple();
+        }
+
+        function resetTrigSettings() {
+            document.getElementById('xRangePurple').value = '-2,2';
+            document.getElementById('amplitudePurple').value = 1;
+            document.getElementById('frequencyPurple').value = 1;
+            document.getElementById('dataDensityPurple').value = 100;
+            updateTrigChartPurple();
+        }
+
+        function resetCustomSettings() {
+            document.getElementById('chartTypePurple').value = 'line';
+            document.getElementById('dataModePurple').value = 'random';
+            document.getElementById('dataPointsPurple').value = 30;
+            document.getElementById('dataRangePurple').value = 100;
+            generateCustomDataPurple();
+        }
+
+        function resetAllSettingsPurple() {
+            resetWindSpeedSettings();
+            resetTrigSettings();
+            resetCustomSettings();
+        }
+
+        // 全局功能
+        function exportAllChartsPurple() {
+            Object.entries(purpleCharts).forEach(([name, chart]) => {
+                if (chart) {
+                    const url = chart.toBase64Image();
+                    const link = document.createElement('a');
+                    link.download = `purple-${name}-${Date.now()}.png`;
+                    link.href = url;
+                    link.click();
+                }
+            });
+        }
+
+        function randomizeAllDataPurple() {
+            Object.values(purpleCharts).forEach(chart => {
+                if (chart && chart.data && chart.data.datasets) {
+                    chart.data.datasets.forEach(dataset => {
+                        if (dataset.data) {
+                            dataset.data = dataset.data.map(() => Math.random() * 100);
+                        }
+                    });
+                    chart.update();
+                }
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🌸 浅紫色渐变主题网站加载完成');
+            
+            // 延迟初始化以确保所有元素都已渲染
+            setTimeout(() => {
+                createWindSpeedChartPurple();
+                createTrigChartPurple();
+                createAxisDemoChartsPurple();
+                createCustomChartPurple();
+                updateWindSpeedChartPurple();
+                updateTrigChartPurple();
+                generateCustomDataPurple();
+                updateAxisPositionsPurple();
+                
+                console.log('✅ 所有浅紫色主题图表初始化完成');
+            }, 100);
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
