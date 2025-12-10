@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第六章 - 坐标轴定制数据可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <link rel="stylesheet" href="chapter6.css">
+</head>
+<body>
+    <header>
+        <h1>第六章 - 坐标轴定制数据可视化</h1>
+        <p>淡紫色渐变主题 - 坐标轴位置、刻度样式、轴脊控制等高级定制功能</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#axis-overview">坐标轴概述</a></li>
+            <li><a href="#custom-position">位置定制</a></li>
+            <li><a href="#tick-customization">刻度定制</a></li>
+            <li><a href="#spine-control">轴脊控制</a></li>
+            <li><a href="#wind-speed">风速实例</a></li>
+            <li><a href="#sin-cos">函数曲线</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- 坐标轴概述 -->
+        <section id="axis-overview">
+            <h2>坐标轴概述</h2>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3>标准坐标轴</h3>
+                    <div class="chart-container">
+                        <canvas id="standardAxis"></canvas>
+                    </div>
+                </div>
+                <div class="demo-card">
+                    <h3>多坐标轴</h3>
+                    <div class="chart-container">
+                        <canvas id="multiAxis"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 位置定制 -->
+        <section id="custom-position">
+            <h2>位置定制</h2>
+            <div class="controls-panel">
+                <h3>坐标轴位置控制</h3>
+                <div class="control-group">
+                    <label>X轴位置:</label>
+                    <select id="xAxisPosition">
+                        <option value="bottom">底部</option>
+                        <option value="top">顶部</option>
+                        <option value="zero">零点</option>
+                    </select>
+                    
+                    <label>Y轴位置:</label>
+                    <select id="yAxisPosition">
+                        <option value="left">左侧</option>
+                        <option value="right">右侧</option>
+                        <option value="zero">零点</option>
+                    </select>
+                    
+                    <button onclick="updateAxisPosition()">更新位置</button>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <h3>自定义位置坐标轴</h3>
+                <div class="chart-container">
+                    <canvas id="customPositionChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 刻度定制 -->
+        <section id="tick-customization">
+            <h2>刻度定制</h2>
+            <div class="controls-panel">
+                <h3>刻度样式控制</h3>
+                <div class="control-group">
+                    <label>刻度方向:</label>
+                    <select id="tickDirection">
+                        <option value="out">向外</option>
+                        <option value="in">向内</option>
+                        <option value="both">双向</option>
+                    </select>
+                    
+                    <label>刻度长度:</label>
+                    <input type="range" id="tickLength" min="2" max="12" value="6">
+                    <span id="tickLengthValue">6px</span>
+                    
+                    <label>刻度颜色:</label>
+                    <input type="color" id="tickColor" value="#6B46C1">
+                </div>
+                
+                <div class="control-group">
+                    <label>标签旋转:</label>
+                    <input type="range" id="labelRotation" min="0" max="90" value="0">
+                    <span id="labelRotationValue">0°</span>
+                    
+                    <label>标签字体大小:</label>
+                    <input type="range" id="labelSize" min="10" max="18" value="12">
+                    <span id="labelSizeValue">12px</span>
+                </div>
+                
+                <button onclick="updateTickStyle()">更新样式</button>
+            </div>
+
+            <div class="demo-card">
+                <h3>深圳市24小时平均风速</h3>
+                <div class="chart-container large">
+                    <canvas id="windSpeedChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 轴脊控制 -->
+        <section id="spine-control">
+            <h2>轴脊控制</h2>
+            <div class="controls-panel">
+                <h3>轴脊显示控制</h3>
+                <div class="control-group">
+                    <label>顶部轴脊:</label>
+                    <input type="checkbox" id="topSpine" checked>
+                    
+                    <label>底部轴脊:</label>
+                    <input type="checkbox" id="bottomSpine" checked>
+                    
+                    <label>左侧轴脊:</label>
+                    <input type="checkbox" id="leftSpine" checked>
+                    
+                    <label>右侧轴脊:</label>
+                    <input type="checkbox" id="rightSpine" checked>
+                </div>
+                
+                <button onclick="updateSpineVisibility()">更新显示</button>
+            </div>
+
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3>轴脊显示控制</h3>
+                    <div class="chart-container">
+                        <canvas id="spineControlChart"></canvas>
+                    </div>
+                </div>
+                <div class="demo-card">
+                    <h3>隐藏部分轴脊</h3>
+                    <div class="chart-container">
+                        <canvas id="partialSpineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 风速实例 -->
+        <section id="wind-speed">
+            <h2>深圳市24小时平均风速实例</h2>
+            <div class="controls-panel">
+                <h3>时间格式控制</h3>
+                <div class="control-group">
+                    <label>时间间隔:</label>
+                    <select id="timeInterval">
+                        <option value="2">2小时</option>
+                        <option value="4">4小时</option>
+                        <option value="6">6小时</option>
+                    </select>
+                    
+                    <label>时间格式:</label>
+                    <select id="timeFormat">
+                        <option value="HH:mm">24小时制</option>
+                        <option value="hh:mm a">12小时制</option>
+                        <option value="HH时">中文时间</option>
+                    </select>
+                    
+                    <button onclick="updateTimeFormat()">更新格式</button>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <h3>深圳市24小时平均风速变化</h3>
+                <div class="chart-container large">
+                    <canvas id="shenzhenWindChart"></canvas>
+                </div>
+                <div class="data-display">
+                    <p>数据说明：2019年10月24日深圳市24小时平均风速监测数据</p>
+                    <p>最高风速：22 km/h | 最低风速：7 km/h | 平均风速：11.5 km/h</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 函数曲线 -->
+        <section id="sin-cos">
+            <h2>正弦与余弦曲线实例</h2>
+            <div class="controls-panel">
+                <h3>数学函数控制</h3>
+                <div class="control-group">
+                    <label>函数类型:</label>
+                    <select id="functionType">
+                        <option value="both">正弦+余弦</option>
+                        <option value="sin">仅正弦</option>
+                        <option value="cos">仅余弦</option>
+                        <option value="tan">正切函数</option>
+                    </select>
+                    
+                    <label>X轴范围:</label>
+                    <select id="xRange">
+                        <option value="2π">-2π 到 2π</option>
+                        <option value="π">-π 到 π</option>
+                        <option value="4π">-4π 到 4π</option>
+                    </select>
+                    
+                    <button onclick="updateMathFunction()">更新函数</button>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <h3>三角函数图像</h3>
+                <div class="chart-container large">
+                    <canvas id="mathFunctionChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>第六章坐标轴定制数据可视化 - 基于matplotlib高级技巧的Web实现</p>
+    </footer>
+
+    <script>
+        // 淡紫色渐变主题配色
+        const purpleColors = {
+            primary: '#6B46C1',
+            secondary: '#9333EA',
+            light: '#A855F7',
+            pale: '#F3E8FF',
+            accent: '#7C3AED',
+            gradient1: '#8B5CF6',
+            gradient2: '#EC4899',
+            contrast1: '#6D28D9',
+            contrast2: '#4C1D95',
+            text: '#4C1D95',
+            textSecondary: '#6B21A8',
+            border: '#E9D5FF',
+            shadow: 'rgba(139, 92, 246, 0.15)',
+            grid: 'rgba(139, 92, 246, 0.1)'
+        };
+
+        // 全局变量
+        let standardAxisChart, multiAxisChart, customPositionChart;
+        let windSpeedChart, spineControlChart, partialSpineChart;
+        let shenzhenWindChart, mathFunctionChart;
+
+        // 风速数据
+        const windData = {
+            labels: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', 
+                    '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+            values: [7, 9, 11, 14, 8, 15, 22, 11, 10, 11, 11, 13, 8]
+        };
+
+        // 初始化
+        window.addEventListener('load', function() {
+            initializeStandardAxis();
+            initializeMultiAxis();
+            initializeCustomPosition();
+            initializeTickStyle();
+            initializeSpineControl();
+            initializeWindSpeed();
+            initializeShenzhenWind();
+            initializeMathFunction();
+            setupEventListeners();
+        });
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            document.getElementById('tickLength').addEventListener('input', function(e) {
+                document.getElementById('tickLengthValue').textContent = e.target.value + 'px';
+            });
+            
+            document.getElementById('labelRotation').addEventListener('input', function(e) {
+                document.getElementById('labelRotationValue').textContent = e.target.value + '°';
+            });
+            
+            document.getElementById('labelSize').addEventListener('input', function(e) {
+                document.getElementById('labelSizeValue').textContent = e.target.value + 'px';
+            });
+        }
+
+        // 标准坐标轴
+        function initializeStandardAxis() {
+            const ctx = document.getElementById('standardAxis').getContext('2d');
+            standardAxisChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['0', '2', '4', '6', '8', '10'],
+                    datasets: [{
+                        label: '标准坐标轴',
+                        data: [1, 3, 2, 4, 3, 5],
+                        borderColor: purpleColors.primary,
+                        backgroundColor: 'rgba(107, 70, 193, 0.1)',
+                        tension: 0.3
+                    }]
+                },
+                options: getStandardAxisOptions('标准坐标轴示例')
+            });
+        }
+
+        // 多坐标轴
+        function initializeMultiAxis() {
+            const ctx = document.getElementById('multiAxis').getContext('2d');
+            multiAxisChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1', '2', '3', '4', '5', '6'],
+                    datasets: [{
+                        label: '数据集1',
+                        data: [10, 20, 15, 25, 20, 30],
+                        borderColor: purpleColors.primary,
+                        backgroundColor: 'rgba(107, 70, 193, 0.1)',
+                        yAxisID: 'y'
+                    }, {
+                        label: '数据集2',
+                        data: [100, 200, 150, 250, 200, 300],
+                        borderColor: purpleColors.accent,
+                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '双Y轴示例'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: purpleColors.grid
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: {
+                                color: purpleColors.grid
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 自定义位置坐标轴
+        function initializeCustomPosition() {
+            const ctx = document.getElementById('customPositionChart').getContext('2d');
+            customPositionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['-2', '-1', '0', '1', '2'],
+                    datasets: [{
+                        label: '位置可调',
+                        data: [-1, 0, 1, 0, -1],
+                        borderColor: purpleColors.gradient1,
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        tension: 0.3
+                    }]
+                },
+                options: getStandardAxisOptions('坐标轴位置控制')
+            });
+        }
+
+        // 刻度样式
+        function initializeTickStyle() {
+            const ctx = document.getElementById('windSpeedChart').getContext('2d');
+            windSpeedChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: windData.labels,
+                    datasets: [{
+                        label: '风速 (km/h)',
+                        data: windData.values,
+                        borderColor: purpleColors.primary,
+                        backgroundColor: 'rgba(107, 70, 193, 0.1)',
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '深圳市24小时平均风速'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: purpleColors.text,
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: purpleColors.grid
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '风速 (km/h)',
+                                color: purpleColors.text
+                            },
+                            ticks: {
+                                color: purpleColors.text
+                            },
+                            grid: {
+                                color: purpleColors.grid
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 轴脊控制
+        function initializeSpineControl() {
+            const ctx1 = document.getElementById('spineControlChart').getContext('2d');
+            spineControlChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['A', 'B', 'C', 'D', 'E'],
+                    datasets: [{
+                        label: '完整边框',
+                        data: [12, 19, 3, 5, 2],
+                        backgroundColor: purpleColors.primary
+                    }]
+                },
+                options: getStandardAxisOptions('完整轴脊显示')
+            });
+
+            const ctx2 = document.getElementById('partialSpineChart').getContext('2d');
+            partialSpineChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['A', 'B', 'C', 'D', 'E'],
+                    datasets: [{
+                        label: '部分边框',
+                        data: [12, 19, 3, 5, 2],
+                        backgroundColor: purpleColors.accent
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '隐藏顶部和右侧轴脊'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: purpleColors.grid
+                            },
+                            ticks: {
+                                mirror: true,
+                                z: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 深圳风速图表
+        function initializeShenzhenWind() {
+            const ctx = document.getElementById('shenzhenWindChart').getContext('2d');
+            shenzhenWindChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: windData.labels,
+                    datasets: [{
+                        label: '平均风速',
+                        data: windData.values,
+                        borderColor: purpleColors.primary,
+                        backgroundColor: 'rgba(107, 70, 193, 0.1)',
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        pointBackgroundColor: '#FF9900',
+                        pointBorderColor: purpleColors.primary,
+                        pointBorderWidth: 2,
+                        tension: 0.2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '深圳市24小时平均风速监测',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '时间 (h)',
+                                color: purpleColors.text,
+                                font: {
+                                    size: 14
+                                }
+                            },
+                            ticks: {
+                                color: purpleColors.text,
+                                font: {
+                                    size: 12
+                                },
+                                maxRotation: 45,
+                                minRotation: 45
+                            },
+                            grid: {
+                                color: purpleColors.grid,
+                                drawBorder: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '平均风速 (km/h)',
+                                color: purpleColors.text,
+                                font: {
+                                    size: 14
+                                }
+                            },
+                            ticks: {
+                                color: purpleColors.text,
+                                font: {
+                                    size: 12
+                                },
+                                padding: 10
+                            },
+                            grid: {
+                                color: purpleColors.grid,
+                                drawBorder: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 数学函数图表
+        function initializeMathFunction() {
+            const ctx = document.getElementById('mathFunctionChart').getContext('2d');
+            const xValues = [];
+            const sinValues = [];
+            const cosValues = [];
+            
+            for (let i = -2 * Math.PI; i <= 2 * Math.PI; i += 0.1) {
+                xValues.push(i.toFixed(2));
+                sinValues.push(Math.sin(i));
+                cosValues.push(Math.cos(i));
+            }
+
+            mathFunctionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: '正弦曲线',
+                        data: sinValues,
+                        borderColor: purpleColors.primary,
+                        backgroundColor: 'rgba(107, 70, 193, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.4
+                    }, {
+                        label: '余弦曲线',
+                        data: cosValues,
+                        borderColor: purpleColors.accent,
+                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '正弦与余弦函数图像'
+                        },
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'x (弧度)',
+                                color: purpleColors.text
+                            },
+                            ticks: {
+                                color: purpleColors.text,
+                                callback: function(value, index, values) {
+                                    const labels = ['-2π', '-3π/2', '-π', '-π/2', '0', 'π/2', 'π', '3π/2', '2π'];
+                                    const positions = [-2*Math.PI, -1.5*Math.PI, -Math.PI, -0.5*Math.PI, 0, 0.5*Math.PI, Math.PI, 1.5*Math.PI, 2*Math.PI];
+                                    const idx = positions.findIndex(pos => Math.abs(pos - value) < 0.1);
+                                    return idx !== -1 ? labels[idx] : '';
+                                }
+                            },
+                            grid: {
+                                color: purpleColors.grid
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'y',
+                                color: purpleColors.text
+                            },
+                            ticks: {
+                                color: purpleColors.text,
+                                stepSize: 0.5
+                            },
+                            grid: {
+                                color: purpleColors.grid
+                            },
+                            min: -1.5,
+                            max: 1.5
+                        }
+                    }
+                }
+            });
+        }
+
+        // 标准坐标轴选项
+        function getStandardAxisOptions(title) {
+            return {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: title,
+                        color: purpleColors.text
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: purpleColors.text
+                        },
+                        grid: {
+                            color: purpleColors.grid
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: purpleColors.text
+                        },
+                        grid: {
+                            color: purpleColors.grid
+                        }
+                    }
+                }
+            };
+        }
+
+        // 更新坐标轴位置
+        function updateAxisPosition() {
+            const xPos = document.getElementById('xAxisPosition').value;
+            const yPos = document.getElementById('yAxisPosition').value;
+            
+            // 这里可以添加自定义位置逻辑
+            console.log('更新坐标轴位置:', xPos, yPos);
+        }
+
+        // 更新刻度样式
+        function updateTickStyle() {
+            const direction = document.getElementById('tickDirection').value;
+            const length = parseInt(document.getElementById('tickLength').value);
+            const color = document.getElementById('tickColor').value;
+            const rotation = parseInt(document.getElementById('labelRotation').value);
+            const size = parseInt(document.getElementById('labelSize').value);
+            
+            // 更新所有图表的刻度样式
+            [windSpeedChart, shenzhenWindChart].forEach(chart => {
+                if (chart) {
+                    chart.options.scales.x.ticks.rotation = rotation;
+                    chart.options.scales.x.ticks.font.size = size;
+                    chart.options.scales.x.ticks.color = color;
+                    chart.update();
+                }
+            });
+        }
+
+        // 更新轴脊显示
+        function updateSpineVisibility() {
+            const showTop = document.getElementById('topSpine').checked;
+            const showBottom = document.getElementById('bottomSpine').checked;
+            const showLeft = document.getElementById('leftSpine').checked;
+            const showRight = document.getElementById('rightSpine').checked;
+            
+            // 更新图表边框显示
+            console.log('轴脊显示状态:', { showTop, showBottom, showLeft, showRight });
+        }
+
+        // 更新时间格式
+        function updateTimeFormat() {
+            const interval = parseInt(document.getElementById('timeInterval').value);
+            const format = document.getElementById('timeFormat').value;
+            
+            // 根据间隔重新生成标签
+            const filteredLabels = [];
+            const filteredData = [];
+            
+            for (let i = 0; i < windData.labels.length; i += interval/2) {
+                filteredLabels.push(windData.labels[i]);
+                filteredData.push(windData.values[i]);
+            }
+            
+            shenzhenWindChart.data.labels = filteredLabels;
+            shenzhenWindChart.data.datasets[0].data = filteredData;
+            shenzhenWindChart.update();
+        }
+
+        // 更新数学函数
+        function updateMathFunction() {
+            const functionType = document.getElementById('functionType').value;
+            const range = document.getElementById('xRange').value;
+            
+            let xMin, xMax;
+            switch(range) {
+                case '2π':
+                    xMin = -2 * Math.PI;
+                    xMax = 2 * Math.PI;
+                    break;
+                case 'π':
+                    xMin = -Math.PI;
+                    xMax = Math.PI;
+                    break;
+                case '4π':
+                    xMin = -4 * Math.PI;
+                    xMax = 4 * Math.PI;
+                    break;
+            }
+            
+            const xValues = [];
+            const datasets = [];
+            
+            for (let i = xMin; i <= xMax; i += 0.1) {
+                xValues.push(i.toFixed(2));
+            }
+            
+            if (functionType === 'both' || functionType === 'sin') {
+                datasets.push({
+                    label: '正弦曲线',
+                    data: xValues.map(x => Math.sin(parseFloat(x))),
+                    borderColor: purpleColors.primary,
+                    backgroundColor: 'rgba(107, 70, 193, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.4
+                });
+            }
+            
+            if (functionType === 'both' || functionType === 'cos') {
+                datasets.push({
+                    label: '余弦曲线',
+                    data: xValues.map(x => Math.cos(parseFloat(x))),
+                    borderColor: purpleColors.accent,
+                    backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.4
+                });
+            }
+            
+            if (functionType === 'tan') {
+                datasets.push({
+                    label: '正切函数',
+                    data: xValues.map(x => {
+                        const val = Math.tan(parseFloat(x));
+                        return (val > 5 || val < -5) ? null : val; // 限制显示范围
+                    }),
+                    borderColor: purpleColors.gradient1,
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.1
+                });
+            }
+            
+            mathFunctionChart.data.labels = xValues;
+            mathFunctionChart.data.datasets = datasets;
+            mathFunctionChart.update();
+        }
+    </script>
+</body>
+</html>
