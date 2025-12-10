@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第六章：坐标轴定制 - 淡紫色渐变主题</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 25%, #DDD6FE 50%, #E9D5FF 75%, #F3E8FF 100%);
+            min-height: 100vh;
+            color: #4C1D95;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);
+        }
+
+        h1 {
+            color: #6B46C1;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #6B21A8;
+            font-size: 1.2em;
+            font-weight: 300;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-tab {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #E9D5FF;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #7C3AED;
+        }
+
+        .nav-tab:hover {
+            background: #F3E8FF;
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: #8B5CF6;
+            color: white;
+            border-color: #8B5CF6;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .card h3 {
+            color: #7C3AED;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #E9D5FF;
+            padding-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #F3E8FF;
+            border-radius: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #6B21A8;
+            font-size: 0.9em;
+        }
+
+        select, input[type="range"], button {
+            padding: 10px;
+            border: 2px solid #E9D5FF;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, #A855F7 0%, #8B5CF6 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.08);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #7C3AED;
+        }
+
+        .stat-label {
+            color: #6B21A8;
+            margin-top: 5px;
+        }
+
+        .code-snippet {
+            background: #F3E8FF;
+            border-left: 4px solid #8B5CF6;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #4C1D95;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第六章：坐标轴定制</h1>
+            <p class="subtitle">淡紫色渐变主题 - 坐标轴位置、刻度样式、轴脊控制等高级定制功能</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('overview')">坐标轴概述</div>
+            <div class="nav-tab" onclick="showTab('position')">位置定制</div>
+            <div class="nav-tab" onclick="showTab('ticks')">刻度定制</div>
+            <div class="nav-tab" onclick="showTab('spines')">轴脊控制</div>
+        </nav>
+
+        <!-- 坐标轴概述 -->
+        <div id="overview" class="tab-content active">
+            <div class="card">
+                <h3>📊 坐标轴概述</h3>
+                <p>matplotlib的坐标轴由四个轴脊(spines)组成：上(top)、下(bottom)、左(left)、右(right)。每个轴脊都有对应的刻度(ticks)和标签(labels)。</p>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label>图表类型</label>
+                        <select id="chartType" onchange="updateOverviewChart()">
+                            <option value="line">折线图</option>
+                            <option value="bar">柱状图</option>
+                            <option value="scatter">散点图</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <button onclick="updateOverviewChart()">更新图表</button>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="overviewChart"></canvas>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">轴脊数量</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">坐标轴</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">刻度线</div>
+                    </div>
+                </div>
+
+                <div class="code-snippet">
+                    import matplotlib.pyplot as plt<br>
+                    ax = plt.gca()<br>
+                    print(ax.spines)  # 显示轴脊信息
+                </div>
+            </div>
+        </div>
+
+        <!-- 位置定制 -->
+        <div id="position" class="tab-content">
+            <div class="card">
+                <h3>📍 向任意位置添加坐标轴</h3>
+                <p>可以使用plt.axes()方法在指定位置添加坐标轴，参数格式为[left, bottom, width, height]。</p>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label>子图数量</label>
+                        <select id="subplotCount" onchange="updatePositionChart()">
+                            <option value="2">2个子图</option>
+                            <option value="3">3个子图</option>
+                            <option value="4">4个子图</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <button onclick="updatePositionChart()">重新布局</button>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="positionChart"></canvas>
+                </div>
+
+                <div class="code-snippet">
+                    # 添加子图到指定位置<br>
+                    ax1 = plt.axes([0.1, 0.1, 0.8, 0.8])<br>
+                    ax2 = plt.axes([0.2, 0.2, 0.3, 0.3])
+                </div>
+            </div>
+        </div>
+
+        <!-- 刻度定制 -->
+        <div id="ticks" class="tab-content">
+            <div class="card">
+                <h3>⚙️ 刻度定制</h3>
+                <p>深圳市24小时平均风速数据展示，演示时间刻度的定制技术。</p>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label>时间间隔</label>
+                        <select id="timeInterval" onchange="updateTicksChart()">
+                            <option value="2">2小时</option>
+                            <option value="4">4小时</option>
+                            <option value="6">6小时</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>刻度方向</label>
+                        <select id="tickDirection" onchange="updateTicksChart()">
+                            <option value="in">向内</option>
+                            <option value="out">向外</option>
+                            <option value="inout">双向</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>旋转角度</label>
+                        <input type="range" id="rotationAngle" min="0" max="90" value="45" onchange="updateTicksChart()">
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="ticksChart"></canvas>
+                </div>
+
+                <div class="code-snippet">
+                    # 定制时间刻度<br>
+                    from matplotlib.dates import DateFormatter, HourLocator<br>
+                    ax.xaxis.set_major_locator(HourLocator(interval=2))<br>
+                    ax.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+                </div>
+            </div>
+        </div>
+
+        <!-- 轴脊控制 -->
+        <div id="spines" class="tab-content">
+            <div class="card">
+                <h3>🎯 轴脊控制</h3>
+                <p>正弦与余弦曲线展示，演示轴脊的隐藏和移动技术。</p>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label>隐藏上轴脊</label>
+                        <input type="checkbox" id="hideTop" checked onchange="updateSpinesChart()">
+                    </div>
+                    <div class="control-group">
+                        <label>隐藏右轴脊</label>
+                        <input type="checkbox" id="hideRight" checked onchange="updateSpinesChart()">
+                    </div>
+                    <div class="control-group">
+                        <label>移动原点</label>
+                        <input type="checkbox" id="moveOrigin" checked onchange="updateSpinesChart()">
+                    </div>
+                    <div class="control-group">
+                        <button onclick="updateSpinesChart()">更新显示</button>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="spinesChart"></canvas>
+                </div>
+
+                <div class="code-snippet">
+                    # 隐藏和移动轴脊<br>
+                    ax.spines['top'].set_color('none')<br>
+                    ax.spines['right'].set_color('none')<br>
+                    ax.spines['left'].set_position(('data', 0))<br>
+                    ax.spines['bottom'].set_position(('data', 0))
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let overviewChart = null;
+        let positionChart = null;
+        let ticksChart = null;
+        let spinesChart = null;
+
+        // 标签切换
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // 初始化对应图表
+            setTimeout(() => {
+                if (tabName === 'overview') updateOverviewChart();
+                else if (tabName === 'position') updatePositionChart();
+                else if (tabName === 'ticks') updateTicksChart();
+                else if (tabName === 'spines') updateSpinesChart();
+            }, 100);
+        }
+
+        // 生成数据
+        function generateData(type = 'line') {
+            const labels = ['1月', '2月', '3月', '4月', '5月', '6月'];
+            let data1, data2;
+            
+            if (type === 'line') {
+                data1 = [65, 78, 90, 81, 56, 85];
+                data2 = [45, 68, 70, 91, 76, 65];
+            } else if (type === 'bar') {
+                data1 = [12, 19, 3, 5, 2, 3];
+                data2 = [15, 12, 18, 14, 8, 10];
+            } else {
+                data1 = Array.from({length: 6}, () => Math.random() * 100);
+                data2 = Array.from({length: 6}, () => Math.random() * 100);
+            }
+            
+            return { labels, data1, data2 };
+        }
+
+        // 概述图表
+        function updateOverviewChart() {
+            const type = document.getElementById('chartType').value;
+            const data = generateData(type);
+            const ctx = document.getElementById('overviewChart').getContext('2d');
+            
+            if (overviewChart) overviewChart.destroy();
+            
+            overviewChart = new Chart(ctx, {
+                type: type === 'scatter' ? 'scatter' : type,
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: '数据系列1',
+                        data: data.data1,
+                        borderColor: '#8B5CF6',
+                        backgroundColor: type === 'line' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(139, 92, 246, 0.6)',
+                        tension: 0.4
+                    }, {
+                        label: '数据系列2',
+                        data: data.data2,
+                        borderColor: '#EC4899',
+                        backgroundColor: type === 'line' ? 'rgba(236, 72, 153, 0.1)' : 'rgba(236, 72, 153, 0.6)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: '坐标轴概述示例' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // 位置图表
+        function updatePositionChart() {
+            const count = parseInt(document.getElementById('subplotCount').value);
+            const ctx = document.getElementById('positionChart').getContext('2d');
+            
+            if (positionChart) positionChart.destroy();
+            
+            const datasets = [];
+            const colors = ['#8B5CF6', '#EC4899', '#10B981', '#F59E0B'];
+            
+            for (let i = 0; i < count; i++) {
+                datasets.push({
+                    label: `子图 ${i + 1}`,
+                    data: Array.from({length: 10}, () => Math.random() * 100),
+                    borderColor: colors[i % colors.length],
+                    backgroundColor: colors[i % colors.length] + '33',
+                    tension: 0.4
+                });
+            }
+            
+            positionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 10}, (_, i) => `T${i}`),
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: `多子图布局 - ${count}个子图` }
+                    }
+                }
+            });
+        }
+
+        // 刻度图表
+        function updateTicksChart() {
+            const interval = document.getElementById('timeInterval').value;
+            const direction = document.getElementById('tickDirection').value;
+            const rotation = document.getElementById('rotationAngle').value;
+            const ctx = document.getElementById('ticksChart').getContext('2d');
+            
+            if (ticksChart) ticksChart.destroy();
+            
+            // 生成时间标签
+            const timeLabels = [];
+            const windData = [];
+            for (let i = 0; i < 24; i += parseInt(interval)) {
+                timeLabels.push(`${i.toString().padStart(2, '0')}:00`);
+                windData.push(Math.floor(Math.random() * 15 + 5));
+            }
+            
+            ticksChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: '风速 (km/h)',
+                        data: windData,
+                        borderColor: '#8B5CF6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        tension: 0.2,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#EC4899'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: '深圳市24小时平均风速' }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: rotation,
+                                minRotation: rotation
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 轴脊图表
+        function updateSpinesChart() {
+            const hideTop = document.getElementById('hideTop').checked;
+            const hideRight = document.getElementById('hideRight').checked;
+            const moveOrigin = document.getElementById('moveOrigin').checked;
+            const ctx = document.getElementById('spinesChart').getContext('2d');
+            
+            if (spinesChart) spinesChart.destroy();
+            
+            // 生成正弦余弦数据
+            const xValues = Array.from({length: 100}, (_, i) => (i - 50) * 0.1);
+            const sinData = xValues.map(x => Math.sin(x));
+            const cosData = xValues.map(x => Math.cos(x));
+            
+            const piLabels = ['-2π', '-3π/2', '-π', '-π/2', '0', 'π/2', 'π', '3π/2', '2π'];
+            const piIndices = [0, 12, 25, 37, 50, 62, 75, 87, 99];
+            
+            spinesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xValues.map((_, i) => piLabels.includes(piLabels[Math.floor(i/11)]) ? piLabels[Math.floor(i/11)] : ''),
+                    datasets: [{
+                        label: '正弦曲线',
+                        data: sinData,
+                        borderColor: '#8B5CF6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        tension: 0.4,
+                        pointRadius: 0
+                    }, {
+                        label: '余弦曲线',
+                        data: cosData,
+                        borderColor: '#EC4899',
+                        backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: '正弦与余弦曲线' },
+                        legend: { display: true }
+                    },
+                    scales: {
+                        x: {
+                            grid: { 
+                                display: !moveOrigin,
+                                color: moveOrigin ? 'transparent' : undefined
+                            }
+                        },
+                        y: {
+                            grid: { 
+                                display: !moveOrigin,
+                                color: moveOrigin ? 'transparent' : undefined
+                            },
+                            min: -1.5,
+                            max: 1.5
+                        }
+                    }
+                }
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateOverviewChart();
+        });
+    </script>
+</body>
+</html>
